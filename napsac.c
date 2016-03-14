@@ -30,12 +30,15 @@ void calc_fitness(Individual p[]);
 int selection(Individual p[]);
 /* 交叉により子を生成する関数 */
 void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[], int i);
+/* fitness降順にソートする関数 */
+void sort(Individual p[]);
 
 int main(void){
 
   int i, j;
   Individual population[POPULATION_SIZE];
   Individual childs[POPULATION_SIZE];
+  Individual pop_sort[POPULATION_SIZE * 2];
   
   srand((unsigned int) time(0));
   
@@ -49,8 +52,18 @@ int main(void){
   calc_fitness(childs);
   print_all_gene(childs);
 
-
-  
+  for(i = 0; i < POPULATION_SIZE; i++){
+    for(j = 0; j < GENE_SIZE; j++){
+      pop_sort[i].gene[j] = population[i].gene[j];
+    }
+    pop_sort[i].fitness = population[i].fitness;
+  }
+  for(i = POPULATION_SIZE; i < POPULATION_SIZE * 2; i++){
+    for(j = 0; j < GENE_SIZE; j++){
+      pop_sort[i].gene[j] = childs[i].gene[j];
+    }
+    pop_sort[i].fitness = childs[i].fitness;
+  }
 
 }
 
