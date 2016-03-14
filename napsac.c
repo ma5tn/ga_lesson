@@ -28,11 +28,13 @@ void print_all_gene(Individual p[]);
 void calc_fitness(Individual p[]);
 /* ルーレット選択で選択された個体のインデックスを返す関数 */
 int selection(Individual p[]);
+//void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[]);
 
 int main(void){
 
   int i, j;
   Individual population[POPULATION_SIZE];
+  Individual childs[POPULATION_SIZE];
   
   srand((unsigned int) time(0));
   
@@ -40,19 +42,91 @@ int main(void){
   initialize(population);
   calc_fitness(population);
   print_all_gene(population);
+ // crossover(selection(population), selection(population), childs);
 
-  printf("%d\n", selection(population));
-  printf("%d\n", selection(population));
 
   
-  /*
 
-  int childs[POPULATION_SIZE][GENE_SIZE];
+}
+
+void initialize(Individual p[]){
+  int i, j;
+  Individual *p_;
+  p_ = p;
+
+  for(i = 0; i < POPULATION_SIZE; i++){
+    for(j = 0; j < GENE_SIZE; j++){
+      p_[i].gene[j] = rand() % 2;
+    }
+  }
+}
+
+/* 全ての集団を出力する関数 */
+void print_all_gene(Individual p[]){
+  int i, j;
+  Individual *p_;
+  p_ = p;
+
+  for(i = 0; i < POPULATION_SIZE; i++){
+    printf("%2d:", i);
+    for(j = 0; j < GENE_SIZE; j++){
+      printf("%d ", p_[i].gene[j]);
+    }
+    printf("  fitness:%d\n", p_[i].fitness);
+  }
+}
+
+/* 全ての個体の適応度を計算する関数  */
+void calc_fitness(Individual p[]){
+  int i, j;
+  int f, total_weight;
+  Individual *p_;
+  p_ = p;
+  for(i = 0; i < POPULATION_SIZE; i++){
+    f = 0;
+    total_weight = 0;
+    for(j = 0; j < GENE_SIZE; j++){
+      if(p_[i].gene[j] == 1){
+        f += items.value[j];
+        total_weight += items.weight[j];
+        if(MAX_WEIGHT < total_weight){
+          f = 1;
+          break;
+        }
+      }
+    }
+    p_[i].fitness = f;
+  }
+}
+
+/* ルーレット選択で選択された個体のインデックスを返す関数 */
+int selection(Individual p[]){
+  int i, j, rnd;
+  int total_fitness = 0;
+  int tmp = 0;
+  Individual *p_;
+  p_ = p;
+  for(i = 0; i < POPULATION_SIZE; i++){
+    total_fitness += p_[i].fitness;
+  }
+
+  rnd = rand() % (total_fitness + 1);
+  p_ = p;
+  for(i = 0; i < POPULATION_SIZE; i++){
+    tmp += p[i].fitness;
+    if(rnd < tmp) break;
+  }
+
+  return i;
+}
+/*
+void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[]){
+  int i, j;
+  Individual *p_;
+  p_ = p;
   for(i = 0; i < POPULATION_SIZE; i += 2){
-    int parent1_index = selection(population, fitness);
-    int parent2_index = selection(population, fitness);
     printf("parent1 : %2d : ", parent1_index);
-    for(j = 0; j < GENE_SIZE; j++) printf("%d ", population[parent1_index][j]);
+    for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[i].gene[j]);
     printf("\n");
     printf("parent2 : %2d : ", parent2_index);
     for(j = 0; j < GENE_SIZE; j++) printf("%d ", population[parent2_index][j]);
@@ -76,83 +150,5 @@ int main(void){
     for(j = 0; j < GENE_SIZE; j++) printf("%d ", childs[i + 1][j]);
     printf("\n");
   }
-  */
-
 }
-
-void initialize(Individual p[]){
-  int i, j;
-  Individual *p_;
-  p_ = p;
-
-  for(i = 0; i < POPULATION_SIZE; i++){
-    for(j = 0; j < GENE_SIZE; j++){
-      p_->gene[j] = rand() % 2;
-    }
-    p_++;
-  }
-}
-
-/* 全ての集団を出力する関数 */
-void print_all_gene(Individual p[]){
-  int i, j;
-  Individual *p_;
-  p_ = p;
-
-  for(i = 0; i < POPULATION_SIZE; i++){
-    printf("%2d:", i);
-    for(j = 0; j < GENE_SIZE; j++){
-      printf("%d ", p_->gene[j]);
-    }
-    printf("  fitness:%d\n", p_->fitness);
-    //printf("\n");
-    p_++;
-  }
-}
-
-/* 全ての個体の適応度を計算する関数  */
-void calc_fitness(Individual p[]){
-  int i, j;
-  int f, total_weight;
-  Individual *p_;
-  p_ = p;
-  for(i = 0; i < POPULATION_SIZE; i++){
-    f = 0;
-    total_weight = 0;
-    for(j = 0; j < GENE_SIZE; j++){
-      if(p_->gene[j] == 1){
-        f += items.value[j];
-        total_weight += items.weight[j];
-        if(MAX_WEIGHT < total_weight){
-          f = 1;
-          break;
-        }
-      }
-    }
-    p_->fitness = f;
-    p_++;
-  }
-}
-
-/* ルーレット選択で選択された個体のインデックスを返す関数 */
-int selection(Individual p[]){
-  int i, j, rnd;
-  int total_fitness = 0;
-  int tmp = 0;
-  Individual *p_;
-  p_ = p;
-  for(i = 0; i < POPULATION_SIZE; i++){
-    total_fitness += p_->fitness;
-    p_++;
-  }
-
-  rnd = rand() % (total_fitness + 1);
-  p_ = p;
-  for(i = 0; i < POPULATION_SIZE; i++){
-    tmp += p->fitness;
-    if(rnd < tmp) break;
-    p_++;
-  }
-
-  return i;
-}
+*/
