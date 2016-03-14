@@ -28,7 +28,8 @@ void print_all_gene(Individual p[]);
 void calc_fitness(Individual p[]);
 /* ルーレット選択で選択された個体のインデックスを返す関数 */
 int selection(Individual p[]);
-//void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[]);
+/* 交叉により子を生成する関数 */
+void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[], int i);
 
 int main(void){
 
@@ -42,7 +43,11 @@ int main(void){
   initialize(population);
   calc_fitness(population);
   print_all_gene(population);
- // crossover(selection(population), selection(population), childs);
+  for(i = 0; i < 50 ; i+=2){
+    crossover(selection(population), selection(population), population, childs, i);
+  }
+  calc_fitness(childs);
+  print_all_gene(childs);
 
 
   
@@ -119,36 +124,37 @@ int selection(Individual p[]){
 
   return i;
 }
-/*
-void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[]){
-  int i, j;
-  Individual *p_;
+
+/* 交叉により子を生成する関数 */
+void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[], int i){
+  int j;
+  Individual *p_, *c_;
   p_ = p;
-  for(i = 0; i < POPULATION_SIZE; i += 2){
-    printf("parent1 : %2d : ", parent1_index);
-    for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[i].gene[j]);
-    printf("\n");
-    printf("parent2 : %2d : ", parent2_index);
-    for(j = 0; j < GENE_SIZE; j++) printf("%d ", population[parent2_index][j]);
-    printf("\n");
-    int crossover_index = rand() % GENE_SIZE;
-    int child1[GENE_SIZE];
-    int child2[GENE_SIZE];
-    for(j = 0; j < GENE_SIZE; j++){
-      if(j < crossover_index){
-        childs[i][j] = population[parent1_index][j];
-        childs[i + 1][j] = population[parent2_index][j];
-      }else{
-        childs[i][j] = population[parent2_index][j];
-        childs[i + 1][j] = population[parent1_index][j];
-      }
+  c_ = c;
+  printf("-----------------------------------------------------------\n");
+  printf("parent1 : %2d : ", parent1_index);
+  for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[parent1_index].gene[j]);
+  printf("\n");
+  printf("parent2 : %2d : ", parent2_index);
+  for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[parent2_index].gene[j]);
+  printf("\n");
+  int crossover_index = rand() % GENE_SIZE;
+  printf("cross : %2d\n", crossover_index );
+  int child1[GENE_SIZE];
+  int child2[GENE_SIZE];
+  for(j = 0; j < GENE_SIZE; j++){
+    if(j < crossover_index){
+      c_[i].gene[j] = p_[parent1_index].gene[j];
+      c_[i + 1].gene[j] = p_[parent2_index].gene[j];
+    }else{
+      c_[i].gene[j] = p_[parent2_index].gene[j];
+      c_[i + 1].gene[j] = p_[parent1_index].gene[j];
     }
-    printf("child1 :       ", parent1_index);
-    for(j = 0; j < GENE_SIZE; j++) printf("%d ", childs[i][j]);
-    printf("\n");
-    printf("child2 :       ", parent2_index);
-    for(j = 0; j < GENE_SIZE; j++) printf("%d ", childs[i + 1][j]);
-    printf("\n");
   }
+  printf("child1 :       ", parent1_index);
+  for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i].gene[j]);
+  printf("\n");
+  printf("child2 :       ", parent2_index);
+  for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i + 1].gene[j]);
+  printf("\n");
 }
-*/
