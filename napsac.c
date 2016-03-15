@@ -3,8 +3,7 @@
 #define POPULATION_SIZE 50
 #define GENE_SIZE 20
 #define  MAX_WEIGHT 553
-#define WEIGHT 0
-#define PROFIT 1
+#define MUTATION_RATE 0.05
 
 typedef struct{
   int weight[20]; //重量
@@ -30,8 +29,11 @@ void calc_fitness(Individual p[]);
 int selection(Individual p[]);
 /* 交叉により子を生成する関数 */
 void crossover(int parent1_index, int parent2_index, Individual p[], Individual c[], int i);
+/* 突然変異をさせる関数 */
+void mutation(Individual p[]);
 /* fitness降順にソートする関数 */
 void sort(Individual p[]);
+
 
 int main(void){
 
@@ -170,4 +172,21 @@ void crossover(int parent1_index, int parent2_index, Individual p[], Individual 
   printf("child2 :       ", parent2_index);
   for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i + 1].gene[j]);
   printf("\n");
+}
+
+/* 突然変異をさせる関数 */
+void mutation(Individual p[]){
+  int i, j, r;
+  Individual *p_;
+  p_ = p;
+  int mutation_r = MUTATION_RATE * 100;
+
+  for(i = 0; i < POPULATION_SIZE; i++){
+    for(j = 0; j < GENE_SIZE; j++){
+      r = rand() % 100;
+      if(r < mutation_r){
+        if(p[i].gene[j] == 0) p[i].gene[j] = 1; else p[i].gene[j] = 0;
+      }
+    }
+  }
 }
