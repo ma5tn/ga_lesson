@@ -4,7 +4,7 @@
 #define GENE_SIZE 20
 #define  MAX_WEIGHT 553
 #define MUTATION_RATE 0.05
-#define MAX_GENERATION 200
+#define MAX_GENERATION 500
 
 typedef struct{
   int weight[20]; //重量
@@ -56,23 +56,26 @@ int main(void){
      }
      calc_fitness(childs, sizeof(childs)/sizeof(childs[0]));
     
+     mutation(childs, sizeof(childs)/sizeof(childs[0]));
+//     print_all_gene(population, sizeof(population)/sizeof(population[0]));
      for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
          pop_sort[i].gene[j] = population[i].gene[j];
        }
        pop_sort[i].fitness = population[i].fitness;
      }
-     for(i = POPULATION_SIZE; i < POPULATION_SIZE * 2; i++){
+     for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
-         pop_sort[i].gene[j] = childs[i].gene[j];
+         pop_sort[i+POPULATION_SIZE].gene[j] = childs[i].gene[j];
        }
-       pop_sort[i].fitness = childs[i].fitness;
+       pop_sort[i+POPULATION_SIZE].fitness = childs[i].fitness;
      }
     
-     mutation(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
      calc_fitness(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
+//     printf("sortまえ\n");
 //     print_all_gene(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
      sort(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
+//     printf("sortあと\n");
 //     print_all_gene(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
     
      for(i = 0; i < POPULATION_SIZE; i++){
@@ -81,7 +84,12 @@ int main(void){
        }
          population[i].fitness = pop_sort[i].fitness;
      }
-    print_all_gene(population, sizeof(population)/sizeof(population[0]));
+    printf("%2d:", 0);
+    for(j = 0; j < GENE_SIZE; j++){
+      printf("%d ", population[0].gene[j]);
+    }
+    printf("  fitness:%d\n", population[0].fitness);
+   // print_all_gene(population, sizeof(population)/sizeof(population[0]));
   }
 
   print_all_gene(population, sizeof(population)/sizeof(population[0]));
@@ -165,6 +173,7 @@ void crossover(int parent1_index, int parent2_index, Individual p[], Individual 
   Individual *p_, *c_;
   p_ = p;
   c_ = c;
+  /*
   printf("-----------------------------------------------------------\n");
   printf("parent1 : %2d : ", parent1_index);
   for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[parent1_index].gene[j]);
@@ -172,10 +181,9 @@ void crossover(int parent1_index, int parent2_index, Individual p[], Individual 
   printf("parent2 : %2d : ", parent2_index);
   for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[parent2_index].gene[j]);
   printf("\n");
+  */
   int crossover_index = rand() % GENE_SIZE;
-  printf("cross : %2d\n", crossover_index );
-  int child1[GENE_SIZE];
-  int child2[GENE_SIZE];
+//  printf("cross : %2d\n", crossover_index );
   for(j = 0; j < GENE_SIZE; j++){
     if(j < crossover_index){
       c_[i].gene[j] = p_[parent1_index].gene[j];
@@ -185,13 +193,15 @@ void crossover(int parent1_index, int parent2_index, Individual p[], Individual 
       c_[i + 1].gene[j] = p_[parent1_index].gene[j];
     }
   }
+  /*
   printf("child1 :       ", parent1_index);
   for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i].gene[j]);
   printf("\n");
   printf("child2 :       ", parent2_index);
   for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i + 1].gene[j]);
   printf("\n");
-}
+*/
+  }
 
 /* 突然変異をさせる関数 */
 void mutation(Individual p[], int p_length){
@@ -202,7 +212,7 @@ void mutation(Individual p[], int p_length){
 
   for(i = 0; i < p_length; i++){
     for(j = 0; j < GENE_SIZE; j++){
-      r = rand() % 100;
+      r = rand() % 101;
       if(r < mutation_r){
         if(p[i].gene[j] == 0) p[i].gene[j] = 1; else p[i].gene[j] = 0;
       }
@@ -214,8 +224,8 @@ void mutation(Individual p[], int p_length){
 void sort(Individual p[], int p_length){
   int i, j, k;
   Individual tmp;
-  for(i = 0; i < p_length - 1; i++){
-    for(j = p_length - 1; i <  j; j--){
+  for(i = 0; i < p_length; i++){
+    for(j = p_length - 1; i < j; j--){
       if(p[j - 1].fitness < p[j].fitness){
         for(k = 0; k < GENE_SIZE; k++){
           tmp.gene[k] = p[j].gene[k];
