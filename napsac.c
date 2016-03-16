@@ -47,17 +47,17 @@ int main(void){
   
 
   initialize(population);
+  calc_fitness(population, sizeof(population)/sizeof(population[0]));
+  /* 初期集団の表示 */
+  print_all_gene(population, sizeof(population)/sizeof(population[0]));
 
   for(k = 0; k < MAX_GENERATION; k++){
-     calc_fitness(population, sizeof(population)/sizeof(population[0]));
-//     print_all_gene(population, sizeof(population)/sizeof(population[0]));
      for(i = 0; i < 50 ; i+=2){
        crossover(selection(population), selection(population), population, childs, i);
      }
-     calc_fitness(childs, sizeof(childs)/sizeof(childs[0]));
-    
      mutation(childs, sizeof(childs)/sizeof(childs[0]));
-//     print_all_gene(population, sizeof(population)/sizeof(population[0]));
+     calc_fitness(childs, sizeof(childs)/sizeof(childs[0]));
+
      for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
          pop_sort[i].gene[j] = population[i].gene[j];
@@ -71,12 +71,7 @@ int main(void){
        pop_sort[i+POPULATION_SIZE].fitness = childs[i].fitness;
      }
     
-     calc_fitness(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
-//     printf("sortまえ\n");
-//     print_all_gene(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
      sort(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
-//     printf("sortあと\n");
-//     print_all_gene(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
     
      for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
@@ -84,12 +79,6 @@ int main(void){
        }
          population[i].fitness = pop_sort[i].fitness;
      }
-    printf("%2d:", 0);
-    for(j = 0; j < GENE_SIZE; j++){
-      printf("%d ", population[0].gene[j]);
-    }
-    printf("  fitness:%d\n", population[0].fitness);
-   // print_all_gene(population, sizeof(population)/sizeof(population[0]));
   }
 
   print_all_gene(population, sizeof(population)/sizeof(population[0]));
@@ -173,17 +162,7 @@ void crossover(int parent1_index, int parent2_index, Individual p[], Individual 
   Individual *p_, *c_;
   p_ = p;
   c_ = c;
-  /*
-  printf("-----------------------------------------------------------\n");
-  printf("parent1 : %2d : ", parent1_index);
-  for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[parent1_index].gene[j]);
-  printf("\n");
-  printf("parent2 : %2d : ", parent2_index);
-  for(j = 0; j < GENE_SIZE; j++) printf("%d ", p_[parent2_index].gene[j]);
-  printf("\n");
-  */
   int crossover_index = rand() % GENE_SIZE;
-//  printf("cross : %2d\n", crossover_index );
   for(j = 0; j < GENE_SIZE; j++){
     if(j < crossover_index){
       c_[i].gene[j] = p_[parent1_index].gene[j];
@@ -193,15 +172,7 @@ void crossover(int parent1_index, int parent2_index, Individual p[], Individual 
       c_[i + 1].gene[j] = p_[parent1_index].gene[j];
     }
   }
-  /*
-  printf("child1 :       ", parent1_index);
-  for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i].gene[j]);
-  printf("\n");
-  printf("child2 :       ", parent2_index);
-  for(j = 0; j < GENE_SIZE; j++) printf("%d ", c_[i + 1].gene[j]);
-  printf("\n");
-*/
-  }
+}
 
 /* 突然変異をさせる関数 */
 void mutation(Individual p[], int p_length){
