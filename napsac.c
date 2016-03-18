@@ -21,6 +21,7 @@ typedef struct{
   int fitness;
 } Individual;
 
+/* 初期集団を生成する関数 */
 void initialize(Individual p[]);
 /* 全ての集団を出力する関数 */
 void print_all_gene(Individual p[], int p_length);
@@ -39,15 +40,16 @@ void sort(Individual p[], int p_length);
 int main(void){
 
   int i, j, k;
-  Individual population[POPULATION_SIZE];
-  Individual childs[POPULATION_SIZE];
-  Individual pop_sort[POPULATION_SIZE * 2];
+  Individual population[POPULATION_SIZE]; //一世代の集団
+  Individual childs[POPULATION_SIZE]; //生まれた子の集団
+  Individual pop_for_sort[POPULATION_SIZE * 2]; //ソート用の一世代＋子の集団
   
   srand((unsigned int) time(0));
   
 
   initialize(population);
   calc_fitness(population, sizeof(population)/sizeof(population[0]));
+
   /* 初期集団の表示 */
   print_all_gene(population, sizeof(population)/sizeof(population[0]));
 
@@ -60,24 +62,24 @@ int main(void){
 
      for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
-         pop_sort[i].gene[j] = population[i].gene[j];
+         pop_for_sort[i].gene[j] = population[i].gene[j];
        }
-       pop_sort[i].fitness = population[i].fitness;
+       pop_for_sort[i].fitness = population[i].fitness;
      }
      for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
-         pop_sort[i+POPULATION_SIZE].gene[j] = childs[i].gene[j];
+         pop_for_sort[i+POPULATION_SIZE].gene[j] = childs[i].gene[j];
        }
-       pop_sort[i+POPULATION_SIZE].fitness = childs[i].fitness;
+       pop_for_sort[i+POPULATION_SIZE].fitness = childs[i].fitness;
      }
     
-     sort(pop_sort, sizeof(pop_sort)/sizeof(pop_sort[0]));
+     sort(pop_for_sort, sizeof(pop_for_sort)/sizeof(pop_for_sort[0]));
     
      for(i = 0; i < POPULATION_SIZE; i++){
        for(j = 0; j < GENE_SIZE; j++){
-         population[i].gene[j] = pop_sort[i].gene[j];
+         population[i].gene[j] = pop_for_sort[i].gene[j];
        }
-         population[i].fitness = pop_sort[i].fitness;
+         population[i].fitness = pop_for_sort[i].fitness;
      }
   }
 
@@ -86,6 +88,7 @@ int main(void){
 
 }
 
+/* 初期集団を生成する関数 */
 void initialize(Individual p[]){
   int i, j;
   Individual *p_;
